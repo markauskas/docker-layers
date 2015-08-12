@@ -1,0 +1,30 @@
+#content {
+  width: 10000px;
+}
+
+div.volumeId {
+  border: 1px solid #000;
+  margin: 1px;
+  padding: 2px;
+}
+
+div.volume {
+  float: left;
+}
+
+.volumeId {
+  font-family: monospace;
+}
+
+.volumeBox > .volume {
+  border: 1px solid #000;
+  margin: 10px;
+}
+
+.tag {
+  font-weight: bold;
+  color: #f00;
+}
+.size {
+  font-weight: bold;
+}

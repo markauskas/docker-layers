@@ -4,11 +4,13 @@ module DockerLayers
   class Volume
     attr_reader :id
     attr_reader :tags
+    attr_reader :size
     attr_accessor :children
 
     def initialize(data)
       @id       = data[:id]
       @tags     = data[:tags]
+      @size     = data[:size]
       @children = []
     end
 
@@ -18,6 +20,16 @@ module DockerLayers
 
     def inspect
       "#<Volume id=#{short_id.inspect} children=#{children.inspect}>"
+    end
+
+    def to_h
+      {
+        id:       id,
+        short_id: short_id,
+        tags:     tags,
+        size:     size,
+        children: children.map(&:to_h)
+      }
     end
 
     def to_tree(spaces = 0)
@@ -53,6 +65,7 @@ module DockerLayers
         image.history.each do |volume|
           v = Volume.new(
             id:   volume["Id"],
+            size: volume["Size"],
             tags: volume["Tags"]
           )
           v.children << last if last

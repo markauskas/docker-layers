@@ -9,12 +9,16 @@ require 'volume'
 
 module DockerLayers
   class App < Sinatra::Base
+    set :views, settings.root + '/app/views'
+    set :logging, true
+    set :static, true
+
     get '/' do
-      'Hello World'
+      erb :index
     end
 
     get '/trees.json' do
-      json DockerLayers::Volume.trees, content_type: :json
+      json DockerLayers::Volume.trees.map(&:to_h), content_type: :json
     end
   end
 end

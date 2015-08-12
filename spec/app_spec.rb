@@ -8,9 +8,11 @@ describe DockerLayers::App do
     end
   end
 
-  describe 'GET /tree.json' do
+  describe 'GET /trees.json' do
+    before { allow(Docker::Image).to receive(:all) { [] } }
+
     it "should return json" do
-      get '/tree.json'
+      get '/trees.json'
       expect(last_response.content_type).to eq 'application/json'
     end
   end

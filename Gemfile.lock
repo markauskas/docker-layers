@@ -4,7 +4,12 @@ GEM
     backports (3.6.6)
     daemons (1.2.3)
     diff-lcs (1.2.5)
+    docker-api (1.22.2)
+      excon (>= 0.38.0)
+      json
     eventmachine (1.0.8)
+    excon (0.45.4)
+    json (1.8.3)
     multi_json (1.11.2)
     rack (1.6.4)
     rack-protection (1.5.3)
@@ -46,6 +51,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  docker-api
   rake
   rspec
   sinatra

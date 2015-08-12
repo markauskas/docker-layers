@@ -13,8 +13,8 @@ module DockerLayers
       'Hello World'
     end
 
-    get '/tree.json' do
-      json DockerLayers::Volume.tree, content_type: :json
+    get '/trees.json' do
+      json DockerLayers::Volume.trees, content_type: :json
     end
   end
 end

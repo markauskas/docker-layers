@@ -1,34 +1,67 @@
-var Volume = React.createClass({
+// returns the number of leaf-volumes that are reachable from the given volume node
+var countLeafs = function(volume) {
+  if (volume.children.length > 0) {
+    return volume.children.reduce(function(acc, cur, idx, arr) {
+      return acc + countLeafs(cur);
+    }, 0);
+  }
+  else {
+    return 1;
+  }
+};
+
+var VolumeInfo = React.createClass({
   render: function() {
-    var tags = [];
-    if (this.props.data.tags != null) {
-      tags = this.props.data.tags.map(function(tag) {
+    var tags = "";
+    if (this.props.tags != null) {
+      tags = this.props.tags.map(function(tag) {
         return (
           <div className="tag">{tag}</div>
         );
       });
     }
-    var childrenNodes = this.props.data.children.map(function(volume) {
+    return (
+      <div className="volumeInfo">
+        {this.props.id.substring(0, 10)} / {Math.round(this.props.size / 10000) / 100}M<br/>
+        {tags}
+      </div>
+    );
+  }
+});
+
+var VolumeChildren = React.createClass({
+  render: function() {
+    var volumeNodes = this.props.volumes.map(function(volume) {
       return (
-        <Volume data={volume} />
+        <Volume data={volume}/>
       );
     });
     return (
-      <div className="volume">
-        <div className="volumeId">
-          {this.props.data.short_id}
-          <br/>
-          size: <span className="size">{Math.round(this.props.data.size / 10000) / 100}M</span>
-          <br/>
-          {tags}
-        </div>
-        {childrenNodes}
+      <div className="children">
+        {volumeNodes}
+      </div>
+    );
+  }
+});
+
+var Volume = React.createClass({
+  render: function() {
+    var leafs = countLeafs(this.props.data);
+    var children = "";
+    if (this.props.data.children.length > 0) {
+      children = <VolumeChildren volumes={this.props.data.children}/>
+    }
+    return (
+      <div className="volume" style={{flex: leafs}}>
+        <VolumeInfo id={this.props.data.id} tags={this.props.data.tags} size={this.props.data.size} leafs={leafs} />
+        {children}
       </div>
     );
   }
 })
 
-var VolumeBox = React.createClass({displayName: 'ImageBox',
+var VolumeContainer = React.createClass({
+  displayName: 'VolumeContainer',
   getInitialState: function() {
     return {data: []};
   },
@@ -46,19 +79,22 @@ var VolumeBox = React.createClass({displayName: 'ImageBox',
     });
   },
   render: function() {
-    var rootNodes = this.state.data.map(function(root) {
+    var leafs = this.state.data.reduce(function(acc, cur, idx, arr) {
+      return (acc + countLeafs(cur));
+    }, 0);
+    var rootNodes = this.state.data.map(function(volume) {
       return (
-        <Volume data={root} />
+        <Volume data={volume} />
       );
     });
     return (
-      <div className="volumeBox">
+      <div className="volumeContainer" style={{width: ((leafs * 300) + "px")}}>
         {rootNodes}
       </div>
     );
   }
 });
 React.render(
-  <VolumeBox url="/trees.json" />,
+  <VolumeContainer url="/trees.json" />,
   document.getElementById('content')
 );

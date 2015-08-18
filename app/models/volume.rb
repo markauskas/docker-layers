@@ -37,8 +37,12 @@ module DockerLayers
     end
 
     class << self
-      def trees
-        merge_trees(build_subtrees)
+      def trees(filter = nil)
+        merge_trees(build_subtrees(filter))
+      end
+
+      def tree_hash(filter = nil)
+        trees(filter).map(&:to_h)
       end
 
       private
@@ -56,8 +60,8 @@ module DockerLayers
         end
       end
 
-      def build_subtrees
-        images.map { |image| build_tree_for_image(image) }
+      def build_subtrees(filter = nil)
+        images(filter).map { |image| build_tree_for_image(image) }
       end
 
       def build_tree_for_image(image)
@@ -74,8 +78,21 @@ module DockerLayers
         last
       end
 
-      def images
-        Docker::Image.all
+      def images(filter = nil)
+        imgs = Docker::Image.all
+        imgs.select! { |img| image_matches_filter(img, filter) } if filter
+        imgs
+      end
+
+      def image_matches_filter(image, filter)
+        if filter
+          tags = image.info["RepoTags"]
+          !!filter.split(',').detect do |f|
+            image.id.start_with?(f) || !!tags.detect { |t| t.include?(f) }
+          end
+        else
+          true
+        end
       end
     end
   end

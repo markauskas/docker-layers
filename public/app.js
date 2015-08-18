@@ -16,7 +16,7 @@ var VolumeInfo = React.createClass({
     if (this.props.tags != null) {
       tags = this.props.tags.map(function(tag) {
         return (
-          <div className="tag">{tag}</div>
+          <div key={tag} className="tag">{tag}</div>
         );
       });
     }
@@ -33,7 +33,7 @@ var VolumeChildren = React.createClass({
   render: function() {
     var volumeNodes = this.props.volumes.map(function(volume) {
       return (
-        <Volume data={volume}/>
+        <Volume key={volume.id} data={volume}/>
       );
     });
     return (
@@ -84,7 +84,7 @@ var VolumeContainer = React.createClass({
     }, 0);
     var rootNodes = this.state.data.map(function(volume) {
       return (
-        <Volume data={volume} />
+        <Volume key={volume.id} data={volume} />
       );
     });
     return (
@@ -95,6 +95,6 @@ var VolumeContainer = React.createClass({
   }
 });
 React.render(
-  <VolumeContainer url="/trees.json" />,
+  <VolumeContainer url={"/trees.json" + window.location.search} />,
   document.getElementById('content')
 );

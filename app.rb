@@ -18,7 +18,7 @@ module DockerLayers
     end
 
     get '/trees.json' do
-      json DockerLayers::Volume.trees.map(&:to_h), content_type: :json
+      json DockerLayers::Volume.tree_hash(params['filter']), content_type: :json
     end
   end
 end
